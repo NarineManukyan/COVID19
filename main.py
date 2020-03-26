@@ -35,12 +35,12 @@ def predict_future(data, col):
 
 def main():
     # Import data from github
-    data = pd.read_csv('time_series_19-covid-Confirmed.csv')
+    data = pd.read_csv('data/time_series_19-covid-Confirmed.csv')
 
     # Reshape data to convert date columns to date rows
     melted_data = data.melt(id_vars=['Province/State','Country/Region','Lat','Long'], var_name='Date')
 
-    # Separate each ountry into individual column
+    # Separate each country into individual column
     pivoted_data = melted_data.pivot_table(index='Date', columns='Country/Region', values='value', aggfunc='sum')
     p = pivoted_data.reset_index()
     p['Date'] = pd.to_datetime(p['Date'])
@@ -57,14 +57,14 @@ def main():
             df = pd.concat([df, d], ignore_index=True, axis=1)
 
     df.columns = pivoted_data.columns
-    clean_data = df.iloc[:, :-1]
-    clean_data['Date'] = p['Date'].reset_index(drop=True)
+    data_reshaped = df.iloc[:, :-1]
+    data_reshaped['Date'] = p['Date'].reset_index(drop=True)
 
     # Save data
-    clean_data.to_csv('data_clean.csv')
+    data_reshaped.to_csv('data/data_reshaped.csv')
 
     # Forecasting the future with FBProphet
-    predict_future(clean_data, 'US')
+    predict_future(data_reshaped, 'US')
 
 
 if __name__ == '__main__':
